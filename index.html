@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Catlogos de propiedades</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background: #aa00cc;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .filters {
+        margin: 20px;
+        text-align: center;
+      }
+
+      .filters select {
+        margin: 0 10px;
+        padding: 8px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 20px;
+      }
+
+      .card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+      }
+
+      .card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .card-body {
+        padding: 10px;
+      }
+
+      .price {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .price .previous {
+        text-decoration: line-through;
+        color: gray;
+      }
+
+      .discount {
+        background: red;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        margin-top: 5px;
+        display: inline-block;
+      }
+
+      button,
+      a.button {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px;
+        background: #aa00cc;
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      iframe {
+        width: 100%;
+        height: 300px;
+        border: none;
+      }
+
+      @media (max-width: 768px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
+    <!-- React y Babel -->
+    <script
+      src="https://unpkg.com/react@17/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <h1>Inmobiliarias</h1>
+      <div class="filters">
+        <select id="filter-category">
+          <option value="">Todas las categorías</option>
+          <option value="Casa">Casa</option>
+          <option value="Apartamento">Apartamento</option>
+          <option value="Lote">Lote</option>
+        </select>
+        <select id="sort-price">
+          <option value="">Ordenar por precio</option>
+          <option value="asc">Menor a Mayor</option>
+          <option value="desc">Mayor a Menor</option>
+        </select>
+      </div>
+    </header>
+
+    <main id="root"></main>
+
+    <div id="detail-root" style="display: none"></div>
+
+    <script type="text/babel">
+      const properties = [
+        {
+          id: 1,
+          nombre: "Casa moderna en La Molina",
+          ciudad: "Lima",
+          categoria: "Casa",
+          area: 470,
+          habitaciones: 4,
+          baños: 4,
+          parqueaderos: 1,
+          precio_actual: 2497500,
+          precio_anterior: 3005075,
+          imagen: "file:///C:/Users/clase/Documents/parcial/garaje.jpg",
+          latitud: 5.711,
+          longitud: -64.0721,
+        },
+        {
+          id: 2,
+          nombre: "Casa de campo",
+          ciudad: "Lima",
+          categoria: "Casa",
+          area: 500,
+          habitaciones: 4,
+          baños: 4,
+          parqueaderos: 1,
+          precio_actual: 3050200,
+          precio_anterior: 520000000,
+          imagen:
+            "file:///C:/Users/clase/Documents/parcial/casa%20de%20campo.jpg",
+          latitud: 6.2518,
+          longitud: -75.5636,
+        },
+        {
+          id: 3,
+          nombre: "Residencial",
+          ciudad: "Peru",
+          categoria: "Casa",
+          area: 350,
+          habitaciones: 3,
+          baños: 2,
+          parqueaderos: 1,
+          precio_actual: 120000000,
+          precio_anterior: 450000000,
+          imagen: "file:///C:/Users/clase/Documents/parcial/residencial.jpg",
+          latitud: 3.4516,
+          longitud: -76.532,
+        },
+
+        {
+          id: 4,
+          nombre: "La Planicie, La Molina ",
+          ciudad: "Peru",
+          categoria: "Casa",
+          area: 300,
+          habitaciones: 3,
+          baños: 4,
+          parqueaderos: 1,
+          precio_actual: 250000000,
+          precio_anterior: 320000000,
+          imagen: "file:///C:/Users/clase/Documents/parcial/piscinita.jpg",
+          latitud: 6.2518,
+          longitud: -75.5636,
+        },
+      ];
+
+      const { useState } = React;
+
+      function PropertyCard({ property }) {
+        const descuento = Math.round(
+          ((property.precio_anterior - property.precio_actual) /
+            property.precio_anterior) *
+            100
+        );
+        return (
+          <div className="card">
+            <img src={property.imagen} alt={property.nombre} />
+            <div className="card-body">
+              <h3>{property.nombre}</h3>
+              <p>{property.ciudad}</p>
+              <p>Área: {property.area} m²</p>
+              <p>Habitaciones: {property.habitaciones}</p>
+              <p>Baños: {property.baños}</p>
+              <p>Parqueaderos: {property.parqueaderos}</p>
+              <div className="price">
+                <span>${property.precio_actual.toLocaleString()}</span>
+                <span className="previous">
+                  ${property.precio_anterior.toLocaleString()}
+                </span>
+              </div>
+              <div className="discount">{descuento}% OFF</div>
+              <button onClick={() => showDetail(property.id)}>
+                Ver Detalle
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      function Home() {
+        const [filter, setFilter] = useState("");
+        const [sort, setSort] = useState("");
+
+        let filteredProperties = properties.filter((p) => {
+          return filter ? p.categoria === filter : true;
+        });
+
+        if (sort === "asc") {
+          filteredProperties.sort((a, b) => a.precio_actual - b.precio_actual);
+        } else if (sort === "desc") {
+          filteredProperties.sort((a, b) => b.precio_actual - a.precio_actual);
+        }
+
+        return (
+          <div className="grid">
+            {filteredProperties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+          </div>
+        );
+      }
+
+      function showHome() {
+        document.getElementById("root").style.display = "block";
+        document.getElementById("detail-root").style.display = "none";
+        ReactDOM.render(<Home />, document.getElementById("root"));
+      }
+
+      function showDetail(id) {
+        const property = properties.find((p) => p.id === id);
+        if (property) {
+          document.getElementById("root").style.display = "none";
+          document.getElementById("detail-root").style.display = "block";
+          document.getElementById("detail-root").innerHTML = `
+          <div class="card">
+            <img src="${property.imagen}" alt="${property.nombre}" />
+            <div class="card-body">
+              <h2>${property.nombre}</h2>
+              <p>Ciudad: ${property.ciudad}</p>
+              <p>Categoría: ${property.categoria}</p>
+              <p>Área: ${property.area} m²</p>
+              <p>Habitaciones: ${property.habitaciones}</p>
+              <p>Baños: ${property.baños}</p>
+              <p>Parqueaderos: ${property.parqueaderos}</p>
+              <h3>Precio: $${property.precio_actual.toLocaleString()}</h3>
+              <button onclick="showHome()">Volver</button>
+              <h3>Ubicación</h3>
+              <iframe src="https://www.google.com/maps?q=${property.latitud},${
+            property.longitud
+          }&output=embed" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+          </div>
+        `;
+        }
+      }
+
+      // Inicializar Home
+      showHome();
+
+      // Filtros
+      document
+        .getElementById("filter-category")
+        .addEventListener("change", (e) => {
+          const value = e.target.value;
+          ReactDOM.render(<Home />, document.getElementById("root"));
+        });
+
+      document.getElementById("sort-price").addEventListener("change", (e) => {
+        const value = e.target.value;
+        ReactDOM.render(<Home />, document.getElementById("root"));
+      });
+    </script>
+  </body>
+</html>
